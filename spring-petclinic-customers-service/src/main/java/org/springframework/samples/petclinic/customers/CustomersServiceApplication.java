@@ -17,17 +17,20 @@ package org.springframework.samples.petclinic.customers;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+
 /**
  * @author Maciej Szarlinski
  */
-@EnableDiscoveryClient
+// @EnableDiscoveryClient
 @SpringBootApplication
+@OpenAPIDefinition(info = @Info(title = "Owners & Pet API", version = "3.0.1", description = "Owners & Pet Information"))
 public class CustomersServiceApplication {
 
 	@Bean

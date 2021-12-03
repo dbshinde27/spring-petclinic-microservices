@@ -22,10 +22,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.Data;
+
 /**
  * @author Juergen Hoeller Can be Cat, Dog, Hamster...
  */
 @Entity
+@Data
 @Table(name = "types")
 public class PetType {
 
@@ -35,17 +38,5 @@ public class PetType {
 
 	@Column(name = "name")
 	private String name;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(final Integer id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return this.name;
-	}
 
 }

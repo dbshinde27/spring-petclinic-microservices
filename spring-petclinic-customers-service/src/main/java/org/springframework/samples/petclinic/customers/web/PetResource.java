@@ -16,6 +16,11 @@
 package org.springframework.samples.petclinic.customers.web;
 
 import io.micrometer.core.annotation.Timed;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 /**
  * @author Juergen Hoeller
@@ -48,7 +55,7 @@ class PetResource {
 
 	@PostMapping("/owners/{ownerId}/pets")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Pet processCreationForm(@RequestBody PetRequest petRequest, @PathVariable("ownerId") int ownerId) {
+	public Pet processCreationForm(@Valid @RequestBody PetRequest petRequest, @PathVariable("ownerId") int ownerId) {
 
 		final Pet pet = new Pet();
 		final Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
@@ -59,13 +66,19 @@ class PetResource {
 	}
 
 	@PutMapping("/owners/*/pets/{petId}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void processUpdateForm(@RequestBody PetRequest petRequest) {
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "Update a Owner by its id")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation"),
+			@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
+			@ApiResponse(responseCode = "404", description = "Pet not found"),
+			@ApiResponse(responseCode = "405", description = "Validation exception") })
+	public Pet processUpdateForm(@Valid @RequestBody PetRequest petRequest) {
 		int petId = petRequest.getId();
 		Pet pet = findPetById(petId);
-		save(pet, petRequest);
+		return save(pet, petRequest);
 	}
 
+	
 	private Pet save(final Pet pet, final PetRequest petRequest) {
 
 		pet.setName(petRequest.getName());
@@ -78,6 +91,14 @@ class PetResource {
 	}
 
 	@GetMapping("owners/*/pets/{petId}")
+	@Operation(summary = "Get a Pet by its id")
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "Found the Pet",
+							content = { @Content(mediaType = "application/json",
+									schema = @Schema(implementation = Pet.class)) }),
+					@ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
+					@ApiResponse(responseCode = "404", description = "Pet not found", content = @Content) })
 	public PetDetails findPet(@PathVariable("petId") int petId) {
 		return new PetDetails(findPetById(petId));
 	}
@@ -87,6 +108,7 @@ class PetResource {
 		if (!pet.isPresent()) {
 			throw new ResourceNotFoundException("Pet " + petId + " not found");
 		}
+		log.info("Result pet {}", pet.get());
 		return pet.get();
 	}
 

@@ -32,10 +32,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
-import org.springframework.core.style.ToStringCreator;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 /**
  * Simple JavaBean domain object representing an owner.
@@ -47,80 +50,45 @@ import org.springframework.core.style.ToStringCreator;
  * @author Maciej Szarlinski
  */
 @Entity
+@Data
 @Table(name = "owners")
 public class Owner {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Schema(description = "Unique identifier of the Owner.", example = "1", required = true)
 	private Integer id;
 
 	@Column(name = "first_name")
-	@NotEmpty
+	@NotEmpty(message = "First name cannot be empty")
+	@Schema(description = "First name of the Owner.", example = "Jessica", required = true)
 	private String firstName;
 
 	@Column(name = "last_name")
-	@NotEmpty
+	@NotEmpty(message = "Last name cannot be empty")
+	@Schema(description = "Last name of the Owner.", example = "Abigail", required = true)
 	private String lastName;
 
 	@Column(name = "address")
-	@NotEmpty
+	@NotEmpty(message = "Address cannot be empty")
+	@Size(max = 200, message = "Address can not exceed characters")
+	@Schema(description = "Address of the Owner.", example = "88 Constantine Ave, #54", required = true)
 	private String address;
 
 	@Column(name = "city")
-	@NotEmpty
+	@NotEmpty(message = "City cannot be empty")
+	@Schema(description = "City of the Owner.", example = "San Angeles", required = true)
 	private String city;
 
 	@Column(name = "telephone")
-	@NotEmpty
-	@Digits(fraction = 0, integer = 10)
+	@NotEmpty(message = "Telephone cannot be empty")
+	@Digits(fraction = 0, integer = 10, message = "Telephone should contain only 10 digit no.")
+	@Size(min = 10, max = 10, message = "Telephone should be exact 10 digit no.")
+	@Schema(description = "Telephone of the Owner.", example = "1234567890", required = true)
 	private String telephone;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "owner")
 	private Set<Pet> pets;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(final String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(final String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getAddress() {
-		return this.address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getCity() {
-		return this.city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getTelephone() {
-		return this.telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
 
 	protected Set<Pet> getPetsInternal() {
 		if (this.pets == null) {
@@ -138,15 +106,6 @@ public class Owner {
 	public void addPet(Pet pet) {
 		getPetsInternal().add(pet);
 		pet.setOwner(this);
-	}
-
-	@Override
-	public String toString() {
-		return new ToStringCreator(this)
-
-				.append("id", this.getId()).append("lastName", this.getLastName())
-				.append("firstName", this.getFirstName()).append("address", this.address).append("city", this.city)
-				.append("telephone", this.telephone).toString();
 	}
 
 }
