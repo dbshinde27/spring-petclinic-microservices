@@ -60,30 +60,30 @@ public class Owner {
 	private Integer id;
 
 	@Column(name = "first_name")
-	@NotEmpty(message = "First name cannot be empty")
+	@NotEmpty(message = "{owner.firstName.required}")
 	@Schema(description = "First name of the Owner.", example = "Jessica", required = true)
 	private String firstName;
 
 	@Column(name = "last_name")
-	@NotEmpty(message = "Last name cannot be empty")
+	@NotEmpty(message = "owner.lastName.required")
 	@Schema(description = "Last name of the Owner.", example = "Abigail", required = true)
 	private String lastName;
 
 	@Column(name = "address")
-	@NotEmpty(message = "Address cannot be empty")
-	@Size(max = 200, message = "Address can not exceed characters")
+	@NotEmpty(message = "{owner.address.required}")
+	@Size(max = 200, message = "{owner.address.limit}")
 	@Schema(description = "Address of the Owner.", example = "88 Constantine Ave, #54", required = true)
 	private String address;
 
 	@Column(name = "city")
-	@NotEmpty(message = "City cannot be empty")
+	@NotEmpty(message = "{owner.city.required}")
 	@Schema(description = "City of the Owner.", example = "San Angeles", required = true)
 	private String city;
 
 	@Column(name = "telephone")
-	@NotEmpty(message = "Telephone cannot be empty")
-	@Digits(fraction = 0, integer = 10, message = "Telephone should contain only 10 digit no.")
-	@Size(min = 10, max = 10, message = "Telephone should be exact 10 digit no.")
+	@NotEmpty(message = "{owner.telephone.required}")
+	@Digits(fraction = 0, integer = 10, message = "{owner.telephone.invalid}")
+	@Size(min = 10, max = 10, message = "{owner.telephone.limit}")
 	@Schema(description = "Telephone of the Owner.", example = "1234567890", required = true)
 	private String telephone;
 

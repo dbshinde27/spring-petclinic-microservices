@@ -53,11 +53,9 @@ public class Pet {
 	private Integer id;
 
 	@Column(name = "name")
-	@NotEmpty(message = "Name cannot be empty")
 	private String name;
 
 	@Column(name = "birth_date")
-	@NotEmpty(message = "Birth date cannot be empty")
 	@Temporal(TemporalType.DATE)
 	private Date birthDate;
 

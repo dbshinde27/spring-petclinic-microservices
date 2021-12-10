@@ -1,15 +1,9 @@
-package org.springframework.samples.petclinic.customers.web;
+package org.springframework.samples.petclinic.global;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,13 +19,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<Object> resourceNotFoundException(Exception ex, WebRequest request) throws IOException {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", new Date());
-		body.put("status", HttpStatus.NOT_FOUND.value());
-		body.put("message", ex.getMessage());
-		return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+	public ResponseEntity<CustomErrorResponse> resourceNotFoundException(Exception ex, WebRequest request)
+			throws IOException {
 
+		CustomErrorResponse response = new CustomErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(),
+				"ERROR", null, request.getDescription(false));
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 
 	// error handle for @Valid
@@ -39,10 +32,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", new Date());
-		body.put("status", status.value());
-
+		CustomErrorResponse response = new CustomErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+				"ERROR", null, request.getDescription(false));
 		// Get all fields errors
 		Map<String, String> errors = new HashMap<>();
 		ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -51,10 +42,17 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 			errors.put(fieldName, errorMessage);
 		});
 
-		body.put("errors", errors);
+		response.setErrors(errors);
 
-		return new ResponseEntity<>(body, headers, status);
+		return new ResponseEntity<>(response, headers, status);
 
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<CustomErrorResponse> globalExceptionHandler(Exception ex, WebRequest request) {
+		CustomErrorResponse response = new CustomErrorResponse(LocalDateTime.now(),
+				HttpStatus.INTERNAL_SERVER_ERROR.value(), "ERROR", null, request.getDescription(false));
+		return new ResponseEntity<CustomErrorResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

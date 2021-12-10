@@ -18,6 +18,7 @@
     <modules>
         <module>spring-petclinic-micrometer</module>
         <module>spring-petclinic-admin-server</module>
+		<module>spring-petclinic-global-service</module>
         <module>spring-petclinic-customers-service</module>
         <module>spring-petclinic-vets-service</module>
         <module>spring-petclinic-visits-service</module>

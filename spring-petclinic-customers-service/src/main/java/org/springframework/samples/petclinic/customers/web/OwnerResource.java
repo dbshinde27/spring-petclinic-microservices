@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.customers.applicaton.ThirdPartyServiceClient;
 import org.springframework.samples.petclinic.customers.model.Owner;
 import org.springframework.samples.petclinic.customers.model.OwnerRepository;
+import org.springframework.samples.petclinic.global.ResourceNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,10 +89,10 @@ class OwnerResource {
 					@ApiResponse(responseCode = "404", description = "Owner not found", content = @Content) })
 	@GetMapping(value = "/{ownerId}")
 	public Optional<Owner> findOwner(@PathVariable("ownerId") @NotNull Integer ownerId) {
-		 Optional<Owner> owner = ownerRepository.findById(ownerId);
-		 log.info("Result owner {}", owner);
-		 String results = thirdPartyServiceClient.getExternalService();
-		 log.info("External call result = {} ", results);
+		Optional<Owner> owner = ownerRepository.findById(ownerId);
+		log.info("Result owner {}", owner);
+		String results = thirdPartyServiceClient.getExternalService();
+		log.info("External call result = {} ", results);
 		return owner;
 	}
 

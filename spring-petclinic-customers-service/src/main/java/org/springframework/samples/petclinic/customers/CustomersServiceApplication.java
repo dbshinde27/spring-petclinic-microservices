@@ -19,6 +19,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.samples.petclinic.global.CustomGlobalExceptionHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -30,7 +32,9 @@ import io.swagger.v3.oas.annotations.info.Info;
  */
 // @EnableDiscoveryClient
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Owners & Pet API", version = "3.0.1", description = "Owners & Pet Information"))
+@OpenAPIDefinition(
+		info = @Info(title = "Owners & Pet API", version = "3.0.1", description = "Owners & Pet Information"))
+@ComponentScan(basePackages = { "org.springframework.samples.petclinic" })
 public class CustomersServiceApplication {
 
 	@Bean
@@ -47,6 +51,11 @@ public class CustomersServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CustomersServiceApplication.class, args);
+	}
+
+	@Bean
+	public CustomGlobalExceptionHandler getCustomGlobalExceptionHandler() {
+		return new CustomGlobalExceptionHandler();
 	}
 
 }

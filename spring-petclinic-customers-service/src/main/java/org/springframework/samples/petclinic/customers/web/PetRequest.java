@@ -20,6 +20,7 @@ import lombok.Data;
 import java.util.Date;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,12 +33,12 @@ class PetRequest {
 
 	private int id;
 
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	@NotEmpty(message = "Birth date cannot be empty")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@Past(message = "{pet.birthDate.invalid}")
 	private Date birthDate;
 
 	@Size(min = 1)
-	@NotEmpty(message = "Name cannot be empty")
+	@NotEmpty(message = "{pet.name.required}")
 	private String name;
 
 	private int typeId;
